@@ -3,8 +3,8 @@
 
 // Update these with values suitable for your network.
 
-const char* ssid = "JAKSAN"; //name WIFI
-const char* password = "0807571918"; //password of WIFI
+const char* ssid = "Bibi"; //name WIFI
+const char* password = "b1i2e3w4"; //password of WIFI
 const char* mqtt_server = "broker.mqttdashboard.com";
 
 WiFiClient espClient;
@@ -15,7 +15,9 @@ int value = 0;
 
 void setup() { //เชื่อมต่อไปยัง MQTT เซิฟเวอร์
   pinMode(A0, INPUT);// Initialize the BUILTIN_LED pin as an output
-  pinMode(D1, OUTPUT); //not sure
+  pinMode(D1, OUTPUT);
+  pinMode(D2, OUTPUT);
+  pinMode(D3, OUTPUT);//not sure
   Serial.begin(9600);
   setup_wifi();
   client.setServer(mqtt_server, 1883);
@@ -65,9 +67,9 @@ void reconnect() {
     if (client.connect(clientId.c_str())) { //Client ID ต้องไม่ซ้ำกัน แก้ตรงนี้ด้วย
       Serial.println("connected");
       // Once connected, publish an announcement...
-      client.publish("ICanSeeYourVoice", "Hello"); //แก้ Publish Topic ชื่อว่า Temperature 
+      client.publish("ICanSeeYourLight", "Hello"); //แก้ Publish Topic ชื่อว่า Temperature 
       // ... and resubscribe
-      client.subscribe("ICanSeeYourVoice");
+      client.subscribe("ICanSeeYourLight");
     } else {
       Serial.print("failed, rc=");
       Serial.print(client.state());
@@ -86,16 +88,19 @@ void loop() {
 
   double ldrValue,change;
   ldrValue = analogRead(A0);
-  change = ldrValue;
   Serial.println("LDR Sensor");
-  Serial.println(change);
-  snprintf (msg, 75, "%.2lf", change);
-  client.publish("ICanSeeYourVoice" ,msg); //// แสงเยอะความต้านทานลด
-  if (ldrValue > 500) { 
-    digitalWrite(D1, HIGH);
+  Serial.println(ldrValue);
+  snprintf (msg, 75, "%.2lf", ldrValue);
+  client.publish("ICanSeeYourLight" ,msg); //// แสงเยอะความต้านทานลด
+  if (ldrValue > 400) { 
+    digitalWrite(D1, 1023);
+    digitalWrite(D2, 1023);
+    digitalWrite(D3, 1023);
   } 
   else {
-    digitalWrite(D1, LOW);
+    digitalWrite(D1, 0);
+    digitalWrite(D2, 0);
+    digitalWrite(D3, 0);
   }
 
   delay(500);// Wait for 1000 millisecond(s)
